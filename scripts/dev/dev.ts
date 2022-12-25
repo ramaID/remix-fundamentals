@@ -14,7 +14,7 @@ async function go() {
     await saveDb({ lastDevvedApp: app.relativePath });
   } else {
     if (/^\d+$/.test(search)) {
-      search = path.join(`exercise`,`${search.padStart(2, "0")}`);
+      search = path.join(`exercise`, `${search.padStart(2, "0")}`);
     }
 
     app = await findApp(search);
@@ -26,13 +26,16 @@ async function go() {
 
   console.log(`🏎  Starting dev for ./${app.relativePath}`);
 
-  cp.spawnSync(`npm run dev -s`, {
-    // @ts-expect-error no idea what's up with this, but it works as expected
-    cwd: app.fullPath,
-    shell: true,
-    stdio: "inherit",
-    env: { PORT: app.portNumber, ...process.env },
-  });
+  cp.spawnSync(
+    `npx prisma migrate dev && npx prisma db seed && npm run dev -s`,
+    {
+      // @ts-expect-error no idea what's up with this, but it works as expected
+      cwd: app.fullPath,
+      shell: true,
+      stdio: "inherit",
+      env: { PORT: app.portNumber, ...process.env },
+    },
+  );
 }
 
 go();
