@@ -1,11 +1,11 @@
 import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
-
 import { getPostListItems } from "~/models/post.server";
+import { requireAdminUser } from "~/session.server";
+import type { LoaderArgs } from "@remix-run/node";
 
-// 🐨 get the request from the loader
-export async function loader() {
-  // 🐨 call requireAdminUser from session.server with the request
+export async function loader({ request }: LoaderArgs) {
+  await requireAdminUser(request);
   return json({ posts: await getPostListItems() });
 }
 
